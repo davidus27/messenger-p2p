@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PeerJS Text Sender</title>
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 2rem auto;
+      background: #f9f9f9;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    ul {
+      margin-top: 1rem;
+      padding-left: 1rem;
+    }
+    li {
+      background: #e6f2ff;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 4px;
+    }
+    .section {
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔗 PeerJS P2P Text Sender</h1>
+
+  <div class="section">
+    <h2>👤 Your Peer ID</h2>
+    <p><strong id="peer-id">Loading...</strong></p>
+  </div>
+
+  <div class="section">
+    <h2>📤 Send a Message</h2>
+    <input type="text" id="target-id" placeholder="Enter Peer ID">
+    <input type="text" id="message" placeholder="Enter any message">
+    <button id="send">Connect and Send</button>
+  </div>
+
+  <div class="section">
+    <h2>📥 Received Messages</h2>
+    <ul id="received-list"></ul>
+  </div>
+
+  <script>
+    const list = document.getElementById('received-list');
+
+    // Load or create Peer ID
+    const storedId = localStorage.getItem('peer-id');
+    const peer = storedId ? new Peer(storedId) : new Peer();
+
+    peer.on('open', id => {
+      document.getElementById('peer-id').textContent = id;
+      localStorage.setItem('peer-id', id);
+    });
+
+    // Receive incoming messages
+    peer.on('connection', conn => {
+      conn.on('data', data => {
+        const li = document.createElement('li');
+        li.textContent = 'Received: ' + data;
+        list.appendChild(li);
+      });
+    });
+
+    // Send message
+    document.getElementById('send').addEventListener('click', () => {
+      const targetId = document.getElementById('target-id').value.trim();
+      const message = document.getElementById('message').value.trim();
+
+      if (!targetId || !message) {
+        alert('Please enter both Peer ID and a message.');
+        return;
+      }
+
+      if (targetId === peer.id) {
+        alert('❌ Sending to yourself is not supported.');
+        return;
+      }
+
+      const conn = peer.connect(targetId);
+      conn.on('open', () => {
+        conn.send(message);
+      });
+
+      conn.on('error', err => {
+        alert('Connection failed: ' + err.message);
+      });
+    });
+  </script>
+</body>
+</html>
