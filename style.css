@@ -1,35 +1,41 @@
-/* ---- Layout ---- */
 body{
-    font-family: Arial, Helvetica, sans-serif;
-    background:#f2f2f2;margin:0;padding:0
-  }
-  #app{
-    max-width:640px;margin:2rem auto;padding:1.5rem;background:#fff;
-    border-radius:8px;box-shadow:0 0 8px rgba(0,0,0,.1)
-  }
-  h1,h2{text-align:center;margin:.3rem 0}
-  section{margin-top:1.6rem}
-  /* ---- Channel list ---- */
-  #channel-list{list-style:none;padding:0;margin:0}
-  #channel-list li{
-    cursor:pointer;background:#eee;padding:.5rem .7rem;margin:.4rem 0;
-    border-radius:4px;transition:background .2s
-  }
-  #channel-list li.active{background:#cfe2ff}
-  /* ---- Messages ---- */
-  #messages{
-    max-height:320px;overflow-y:auto;background:#fafafa;
-    border:1px solid #ddd;border-radius:4px;padding:.6rem;
-    display:flex;flex-direction:column;gap:.4rem
-  }
-  .message{
-    max-width:75%;padding:.5rem .7rem;border-radius:14px;word-wrap:break-word
-  }
-  .me{background:#d1e7dd;margin-left:auto}
-  .them{background:#f8d7da;margin-right:auto}
-  input,button{
-    font-size:1rem;padding:.55rem;margin-top:.4rem;width:100%;
-    box-sizing:border-box
-  }
-  button{cursor:pointer}
-  
+  font-family:Arial,Helvetica,sans-serif;background:#f2f2f2;margin:0
+}
+#app{
+  max-width:640px;margin:2rem auto;padding:1.5rem;background:#fff;
+  border-radius:8px;box-shadow:0 0 8px rgba(0,0,0,.1)
+}
+h1,h2{text-align:center;margin:.3rem 0}
+section{margin-top:1.6rem}
+
+/* ---------- channel list ---------- */
+#channel-list{list-style:none;padding:0;margin:0}
+#channel-list li{
+  display:flex;justify-content:space-between;align-items:center;
+  cursor:pointer;background:#eee;padding:.5rem .7rem;margin:.4rem 0;
+  border-radius:4px;transition:background .2s;font-size:.95rem
+}
+#channel-list li.active{background:#cfe2ff}
+.remove{
+  color:#888;font-weight:bold;margin-left:.8rem;cursor:pointer;
+}
+.remove:hover{color:#c00}
+
+/* ---------- messages ---------- */
+#messages{
+  max-height:320px;overflow-y:auto;background:#fafafa;
+  border:1px solid #ddd;border-radius:4px;padding:.6rem;
+  display:flex;flex-direction:column;gap:.4rem
+}
+.message{
+  max-width:75%;padding:.5rem .7rem;border-radius:14px;
+  word-wrap:break-word;font-size:.95rem
+}
+.me  {background:#d1e7dd;margin-left:auto}
+.them{background:#f8d7da;margin-right:auto}
+
+input,button{
+  font-size:1rem;padding:.55rem;margin-top:.4rem;width:100%;
+  box-sizing:border-box
+}
+button{cursor:pointer}

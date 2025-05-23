@@ -1,153 +1,136 @@
-/* ---------- DOM SHORTCUTS ---------- */
+/* ---------- DOM  ---------- */
 const $ = id => document.getElementById(id);
-const myIdSpan   = $("my-id");
-const peerIdIn   = $("peer-id-input");
-const connectBtn = $("connect-btn");
-const msgIn      = $("msg-input");
-const sendBtn    = $("send-btn");
-const msgBox     = $("messages");
-const chanList   = $("channel-list");
+const myIdSpan = $("my-id"), peerIn=$("peer-id-input"),
+      connectBtn=$("connect-btn"), msgIn=$("msg-input"),
+      sendBtn=$("send-btn"), msgBox=$("messages"),
+      chanList=$("channel-list");
 
-/* ---------- PEER INITIALISATION ---------- */
-const storedPeerId = localStorage.getItem("peer-id") || undefined;
+/* ---------- PeerJS ---------- */
+const storedPeerId = localStorage.getItem("peer-id")||undefined;
 const peer         = new Peer(storedPeerId);
-const connections  = {};          // peerId -> PeerJS DataConnection
-const chats        = {};          // peerId -> [{txt, fromMe}]
-const acked        = new Set();   // peers we've sent ACK to
-let currentChan    = null;
+const connections  = {};          // id → DataConnection
+const chats        = {};          // id → [{txt,fromMe}]
+const acked        = new Set();
+let   currentChan  = null;
 
-/* ---------- COOKIE HELPERS (channels) ---------- */
-const cookieKey = "channels";
-const saveChans = () =>
-  document.cookie = `${cookieKey}=${Object.keys(chats).join(",")}; path=/;`;
-const loadChans = () => {
-  const c = document.cookie.split("; ").find(r=>r.startsWith(cookieKey+"="));
-  if(!c) return;
-  c.split("=")[1].split(",").forEach(id=>id && addChannel(id,false));
+/* ---------- Persistent channel IDs & names ---------- */
+const LS_CH = "channels", LS_NAMES = "channelNames";
+const getIds   = () => JSON.parse(localStorage.getItem(LS_CH)||"[]");
+const setIds   = ids => localStorage.setItem(LS_CH,JSON.stringify(ids));
+
+let channelNames = JSON.parse(localStorage.getItem(LS_NAMES)||"{}");
+const saveNames  = () => localStorage.setItem(LS_NAMES,JSON.stringify(channelNames));
+
+/* random “curious panda” style names */
+const adjectives = ["curious","happy","brave","clever","gentle","funky","cosmic",
+  "lively","quirky","jazzy","mellow","witty","zany","swift","snazzy","spunky"];
+const animals = ["panda","leopard","otter","koala","dolphin","fox","sloth","hedgehog",
+  "lemur","yak","gecko","alpaca","raccoon","iguana","rabbit","wombat"];
+const rnd = arr => arr[Math.floor(Math.random()*arr.length)];
+const makeName = () => {
+  let n;
+  do n = `${rnd(adjectives)} ${rnd(animals)}`;
+  while(Object.values(channelNames).includes(n));
+  return n;
 };
 
-/* ---------- UI HELPERS ---------- */
-function addChannel(id, autoSwitch = true){
-  if(chats[id]) return;                 // already exists
-  chats[id] = [];
-  const li   = document.createElement("li");
-  li.id      = `chan-${id}`;
-  li.textContent = id;
-  li.onclick = () => switchChannel(id);
+/* ---------- UI helpers ---------- */
+function displayName(id){
+  if(!channelNames[id]){ channelNames[id]=makeName(); saveNames(); }
+  return channelNames[id];
+}
+function addChannel(id,autoSwitch=true){
+  if(chats[id]) return;         // already exists
+  chats[id]=[];
+  const li=document.createElement("li");
+  li.id=`chan-${id}`;
+  li.innerHTML=`<span>${displayName(id)}</span><span class="remove" title="Remove">❌</span>`;
+  li.onclick=e=>{
+    if(e.target.classList.contains("remove")){ removeChannel(id); return; }
+    switchChannel(id,true);
+  };
   chanList.appendChild(li);
-  if(autoSwitch || !currentChan) switchChannel(id);
-  saveChans();
+  const ids=getIds(); if(!ids.includes(id)){ ids.push(id); setIds(ids); }
+  if(autoSwitch||!currentChan) switchChannel(id,false);
+}
+function removeChannel(id){
+  delete chats[id]; delete connections[id]; acked.delete(id);
+  const li=$( `chan-${id}` ); if(li) li.remove();
+  const ids=getIds().filter(x=>x!==id); setIds(ids);
+  delete channelNames[id]; saveNames();
+  if(currentChan===id){ currentChan=null;
+    if(ids.length) switchChannel(ids[0],false); else { msgBox.innerHTML=""; }
+  }
+}
+function setActive(id){
+  [...chanList.children].forEach(li=>li.classList.toggle("active",li.id===`chan-${id}`));
+}
+function switchChannel(id,dial){
+  currentChan=id; setActive(id); renderChat(id);
+  if(dial) ensureConn(id);
+}
+function renderChat(id){
+  msgBox.innerHTML="";
+  (chats[id]||[]).forEach(({txt,fromMe})=>appendMsg(txt,fromMe));
+}
+function appendMsg(text,fromMe){
+  const div=document.createElement("div");
+  div.className=`message ${fromMe?"me":"them"}`; div.textContent=text;
+  msgBox.appendChild(div); msgBox.scrollTop=msgBox.scrollHeight;
 }
 
-function setActiveChan(id){
-  [...chanList.children].forEach(li =>
-    li.classList.toggle("active", li.textContent === id));
+/* ---------- Connection helpers ---------- */
+function install(conn){
+  if(conn.__installed) return; conn.__installed=true;
+  conn.on("data",raw=>handle(raw,conn.peer));
+  conn.on("close",()=>{delete connections[conn.peer]; acked.delete(conn.peer);} );
+  conn.on("error",e=>{console.error("Conn",e);});
 }
-
-function switchChannel(id){
-  currentChan = id;
-  setActiveChan(id);
-  renderMessages(id);
-}
-
-function renderMessages(id){
-  msgBox.innerHTML = "";
-  (chats[id] || []).forEach(({txt, fromMe}) => appendMsgBubble(txt, fromMe));
-  msgBox.scrollTop = msgBox.scrollHeight;
-}
-
-function appendMsgBubble(text, fromMe){
-  const div = document.createElement("div");
-  div.className = `message ${fromMe ? "me":"them"}`;
-  div.textContent = text;
-  msgBox.appendChild(div);
-  msgBox.scrollTop = msgBox.scrollHeight;
-}
-
-/* ---------- CONNECTION MANAGEMENT ---------- */
 function ensureConn(id){
-  if(id === peer.id){ alert("Sending to yourself is not supported."); return null;}
+  if(id===peer.id){alert("Cannot chat with yourself");return null;}
   if(connections[id]?.open) return connections[id];
-
-  const conn = connections[id] || peer.connect(id);
-  connections[id] = conn;
-
-  conn.on("open", ()=> {
-    addChannel(id);              // guarantee channel exists
-    // Attach one unified data handler
-    conn.on("data", payload => handleIncoming(payload, conn.peer));
-    // If we initiated, send ACK immediately (outbound side)
-    if(!acked.has(id)){
-      conn.send(JSON.stringify({type:"ack",from:peer.id}));
-      acked.add(id);
-    }
+  const conn=connections[id]||peer.connect(id,{reliable:true});
+  connections[id]=conn; install(conn);
+  conn.on("open",()=>{
+    addChannel(id,false);
+    if(!acked.has(id)){ conn.send(JSON.stringify({type:"ack",from:peer.id})); acked.add(id); }
   });
-  conn.on("error", e => console.error("Conn error:", e));
   return conn;
 }
 
-/* ---------- MESSAGE SEND / RECEIVE ---------- */
-function handleIncoming(raw, fromId){
-  let data;
-  try{ data = JSON.parse(raw);}catch{ return; }
-
-  if(data.type === "ack"){
-    addChannel(fromId,false);    // create channel silently
-    return;                      // don't render ACK
-  }
-  if(data.type === "msg"){
-    // Auto-ack once per peer
-    if(!acked.has(fromId)){
-      connections[fromId]?.send(JSON.stringify({type:"ack", from:peer.id}));
-      acked.add(fromId);
-    }
-    addChannel(fromId,false);
-    chats[fromId].push({txt:data.message, fromMe:false});
-    if(currentChan === fromId)   appendMsgBubble(data.message,false);
+/* ---------- Messaging ---------- */
+function handle(raw,from){
+  let data;try{data=JSON.parse(raw);}catch{return;}
+  if(data.type==="ack"){ addChannel(from,false); return;}
+  if(data.type==="msg"){
+    if(!acked.has(from)){ ensureConn(from)?.send(JSON.stringify({type:"ack",from:peer.id})); acked.add(from);}
+    addChannel(from,false); chats[from].push({txt:data.message,fromMe:false});
+    if(currentChan===from) appendMsg(data.message,false);
   }
 }
-
-function sendMessage(){
-  const text = msgIn.value.trim();
-  if(!text || !currentChan) return;
-
-  const conn = ensureConn(currentChan);
-  if(!conn) return;
-
-  const payload = {type:"msg", from:peer.id, message:text};
-  conn.send(JSON.stringify(payload));
-  chats[currentChan].push({txt:text, fromMe:true});
-  appendMsgBubble(text,true);
-  msgIn.value = "";
+function send(){
+  const text=msgIn.value.trim(); if(!text||!currentChan) return;
+  const conn=ensureConn(currentChan); if(!conn) return;
+  conn.send(JSON.stringify({type:"msg",from:peer.id,message:text}));
+  chats[currentChan].push({txt:text,fromMe:true}); appendMsg(text,true); msgIn.value="";
 }
 
-/* ---------- PEER EVENTS ---------- */
-peer.on("open", id=>{
-  myIdSpan.textContent = " " + id;   // leading space so it isn't glued
-  localStorage.setItem("peer-id", id);
+/* ---------- Peer events ---------- */
+peer.on("open",id=>{
+  myIdSpan.textContent=" "+id; localStorage.setItem("peer-id",id);
+  getIds().forEach(ch=>{ addChannel(ch,false); ensureConn(ch); });
 });
-
-peer.on("connection", conn=>{
-  connections[conn.peer] = conn;
-  conn.on("data", raw => handleIncoming(raw, conn.peer));
-  // Reply ACK immediately for inbound
-  conn.on("open", ()=>{
-    if(!acked.has(conn.peer)){
-      conn.send(JSON.stringify({type:"ack", from:peer.id}));
-      acked.add(conn.peer);
-    }
+peer.on("connection",conn=>{
+  connections[conn.peer]=conn; install(conn);
+  conn.on("open",()=>{
+    if(!acked.has(conn.peer)){ conn.send(JSON.stringify({type:"ack",from:peer.id})); acked.add(conn.peer); }
   });
 });
 
-/* ---------- UI EVENTS ---------- */
-connectBtn.onclick = () => {
-  const target = peerIdIn.value.trim();
-  if(target) ensureConn(target);
-  peerIdIn.value="";
-};
+/* ---------- UI events ---------- */
+connectBtn.onclick = ()=>{ const id=peerIn.value.trim(); if(id){addChannel(id); ensureConn(id);} peerIn.value=""; };
+sendBtn.onclick  = send;
+msgIn.onkeyup    = e=>e.key==="Enter" && send();
 
-sendBtn.onclick = sendMessage;
-msgIn.onkeyup = e => e.key==="Enter" && sendMessage();
-
-/* ---------- BOOT ---------- */
-loadChans();
+/* ---------- first load ---------- */
+getIds().forEach(ch=>addChannel(ch,false));
