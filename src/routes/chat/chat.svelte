@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+    import Plus from '@lucide/svelte/icons/plus';
 	import type { Person, MessageFeed } from './types';
 	import FriendsList from './FriendsList.svelte';
     import Prompt from './Prompt.svelte';
     import ChatFeed from './ChatFeed.svelte';
-
+    import FriendHeader from './FriendHeader.svelte';
+	// import Popover from '../pop/Popover.svelte';
 	// Props
 	export let people: Person[] = [];
 	export let currentPersonId: number;
@@ -16,16 +18,8 @@
 	let searchQuery: string = '';
 	let textareaElement: HTMLTextAreaElement;
 
-	
-
-	const getCurrentPerson = (): string => {
-		if (currentPersonId === undefined) {
-			return 'Unknown';
-		}
-		return people.find((person) => person.id === currentPersonId)?.name ?? 'Unknown';
-	};
-
 	let elemChat: HTMLElement;
+
 	function scrollChatBottom(behavior?: 'auto' | 'instant' | 'smooth') {
 		setTimeout(() => {
 			elemChat.scrollTo({ top: elemChat.scrollHeight, behavior });
@@ -34,7 +28,6 @@
 
 
 	const sendNewMessage = () => {
-        // console.log("sendNewMessage", currentMessage);
 		if (currentMessage.length === 0 || currentMessage.trim() === '') {
 			return;
 		}
@@ -48,7 +41,6 @@
 		}, 0);
 		scrollChatBottom('smooth');
 	};
-
 
 	// When DOM is mounted, scroll to bottom
 	onMount(() => {
@@ -67,15 +59,24 @@
 			<!-- List -->
 			<FriendsList {people} {currentPersonId} {onPersonSelect} {searchQuery} {scrollChatBottom} />
 			<!-- Footer -->
-			<footer class="border-surface-200-800 border-t-[1px] p-4">(footer)</footer>
+
+            <!-- <Popover/> -->
+            <div class="border-surface-200-800 border-t-[1px] p-4">
+                <button class="btn btn-lg preset-filled w-full"
+                on:click={() => {
+                    // open a modal to add a friend
+                    
+                }}
+                >
+                    <Plus /> Add Friend
+                </button>
+            </div>
 		</div>
 		<!-- Chat -->
 		<div class="grid h-full grid-rows-[auto_1fr_auto]">
 			<!-- Conversation -->
 			<!-- Name of the person -->
-			<div class="border-surface-200-800 border-b-[1px] p-5">
-				<p class="font-bold">Chat with {getCurrentPerson()}</p>
-			</div>
+            <FriendHeader {people} {currentPersonId} />
 			<ChatFeed {messageFeed} bind:elemChat />
 			<!-- Prompt -->
             <Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
