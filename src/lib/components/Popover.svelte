@@ -12,7 +12,7 @@
 	import { fade } from 'svelte/transition';
 	import BadgePlus from '@lucide/svelte/icons/badge-plus';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
-
+	import Plus from '@lucide/svelte/icons/plus';
 	// State
 	let open = $state(false);
 	let friendId = $state('');
@@ -98,9 +98,9 @@
 	<button
 		bind:this={floating.elements.reference}
 		{...interactions.getReferenceProps()}
-		class="btn-gradient"
+		class="btn btn-lg preset-filled w-full"
 	>
-		Add Friend
+		<Plus /> Add Friend
 	</button>
 
 	<!-- Backdrop and Modal -->

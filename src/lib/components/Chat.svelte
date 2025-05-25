@@ -1,12 +1,13 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-    import Plus from '@lucide/svelte/icons/plus';
-	import type { Person, MessageFeed } from './types';
-	import FriendsList from './FriendsList.svelte';
-    import Prompt from './Prompt.svelte';
-    import ChatFeed from './ChatFeed.svelte';
+	import type { Person, MessageFeed } from '$lib/types';
+	import FriendsList from '$lib/components/FriendsList.svelte';
+    import Prompt from '$lib/components/Prompt.svelte';
+    import ChatFeed from '$lib/components/ChatFeed.svelte';
     import FriendHeader from './FriendHeader.svelte';
-	// import Popover from '../pop/Popover.svelte';
+	import Popover from '$lib/components/Popover.svelte';
+
+
 	// Props
 	export let people: Person[] = [];
 	export let currentPersonId: number;
@@ -20,10 +21,20 @@
 
 	let elemChat: HTMLElement;
 
-	function scrollChatBottom(behavior?: 'auto' | 'instant' | 'smooth') {
+	const scrollChatBottom = (behavior?: 'auto' | 'instant' | 'smooth') => {
 		setTimeout(() => {
 			elemChat.scrollTo({ top: elemChat.scrollHeight, behavior });
 		}, 100);
+	}
+
+	const isValid = (id: string) => {
+		return /^[0-9-]+$/.test(id) && id.length === 10;
+	}
+
+	const startsConnection = async (id: string) => {
+		// wait for 5 second
+		await new Promise(resolve => setTimeout(resolve, 5000));
+		return false;
 	}
 
 
@@ -62,14 +73,7 @@
 
             <!-- <Popover/> -->
             <div class="border-surface-200-800 border-t-[1px] p-4">
-                <button class="btn btn-lg preset-filled w-full"
-                on:click={() => {
-                    // open a modal to add a friend
-                    
-                }}
-                >
-                    <Plus /> Add Friend
-                </button>
+                <Popover {isValid} canConnect={startsConnection} />
             </div>
 		</div>
 		<!-- Chat -->
