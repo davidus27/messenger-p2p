@@ -18,8 +18,10 @@
 
 <script lang="ts">
 	import IconSend from '@lucide/svelte/icons/send-horizontal';
-	import { Avatar } from '@skeletonlabs/skeleton-svelte';
+	import AvatarImage from './avatarImage.svelte';
 	import { onMount } from 'svelte';
+	import { preventDefault } from 'svelte/legacy';
+	import { Bubbles } from '@lucide/svelte';
 
 	// Props
 	export let people: Person[] = [];
@@ -38,6 +40,13 @@
 		return people.filter((person) => person.name.toLowerCase().includes(searchQuery.toLowerCase()));
 	};
 
+	const getCurrentPerson = (): string => {
+		if (currentPersonId === undefined) {
+			return 'Unknown';
+		}
+		return people.find((person) => person.id === currentPersonId)?.name ?? 'Unknown';
+	};
+
 	let elemChat: HTMLElement;
 	function scrollChatBottom(behavior?: 'auto' | 'instant' | 'smooth') {
 		setTimeout(() => {
@@ -53,9 +62,18 @@
 	}
 
 	const sendNewMessage = () => {
+		if (currentMessage.length === 0) {
+			return;
+		}
 		onMessageAdd(currentMessage);
 		currentMessage = '';
 		scrollChatBottom('smooth');
+	};
+
+	const switchToChat = (personId: number) => {
+		currentPersonId = personId;
+		onPersonSelect(personId);
+		searchQuery = '';
 	};
 
 	// When DOM is mounted, scroll to bottom
@@ -82,13 +100,9 @@
 							class="card flex w-full items-center space-x-4 p-2 {person.id === currentPersonId
 								? 'preset-filled-primary-500'
 								: 'bg-surface-hover-token'}"
-							on:click={() => onPersonSelect(person.id)}
+							on:click={() => switchToChat(person.id)}
 						>
-							<Avatar
-								src="https://i.pravatar.cc/?img={person.avatar}"
-								name={person.name}
-								size="size-8"
-							/>
+							<AvatarImage name={person.name} small={false} />
 							<span class="flex-1 text-start">
 								{person.name}
 							</span>
@@ -102,15 +116,15 @@
 		<!-- Chat -->
 		<div class="grid-row-[1fr_auto] grid">
 			<!-- Conversation -->
+			<!-- Name of the person -->
+			<div class="border-surface-200-800 border-b-[1px] p-5">
+				<p class="font-bold">Chat with {getCurrentPerson()}</p>
+			</div>
 			<section bind:this={elemChat} class="max-h-[500px] space-y-4 overflow-y-auto p-4">
 				{#each messageFeed as bubble}
 					{#if bubble.host === true}
 						<div class="grid grid-cols-[auto_1fr] gap-2">
-							<Avatar
-								src="https://i.pravatar.cc/?img={bubble.avatar}"
-								name={bubble.name}
-								size="size-12"
-							/>
+							<AvatarImage name={bubble.name} small={true} />
 							<div class="card preset-tonal space-y-2 rounded-tl-none p-4">
 								<header class="flex items-center justify-between">
 									<p class="font-bold">{bubble.name}</p>
@@ -128,11 +142,7 @@
 								</header>
 								<p>{bubble.message}</p>
 							</div>
-							<Avatar
-								src="https://i.pravatar.cc/?img={bubble.avatar}"
-								name={bubble.name}
-								size="size-12"
-							/>
+							<AvatarImage name={bubble.name} small={true} />
 						</div>
 					{/if}
 				{/each}
@@ -145,7 +155,7 @@
 					<button class="input-group-cell preset-tonal">+</button>
 					<textarea
 						bind:value={currentMessage}
-						class="border-0 bg-transparent ring-0"
+						class="resize-none border-0 bg-transparent ring-0"
 						name="prompt"
 						id="prompt"
 						placeholder="Write a message..."
