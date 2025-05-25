@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type { Person } from './types';
+    import type { Person } from '$lib/types';
 
     export let people: Person[] = [];
 	export let currentPersonId: number;
