@@ -9,10 +9,11 @@ function createChatStore() {
     messages: {} as Record<string, { text: string; fromMe: boolean }[]>,
   });
 
-  const peer = new PeerService(localStorage.getItem('myId') || null);
+  const peer = new PeerService(localStorage.getItem('peer-id') || null);
 
   peer.addEventListener('open', (e) => {
     const id = (e as CustomEvent).detail;
+    localStorage.setItem('peer-id', id);
     update(state => ({ ...state, myId: id }));
     loadChannels();
   });
