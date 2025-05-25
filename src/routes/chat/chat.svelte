@@ -20,8 +20,6 @@
 	import IconSend from '@lucide/svelte/icons/send-horizontal';
 	import AvatarImage from './avatarImage.svelte';
 	import { onMount } from 'svelte';
-	import { preventDefault } from 'svelte/legacy';
-	import { Bubbles } from '@lucide/svelte';
 
 	// Props
 	export let people: Person[] = [];
