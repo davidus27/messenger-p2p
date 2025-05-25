@@ -9,7 +9,7 @@ function createChatStore() {
     messages: {} as Record<string, { text: string; fromMe: boolean }[]>,
   });
 
-  const peer = new PeerService(null);
+  const peer = new PeerService(localStorage.getItem('myId') || null);
 
   peer.addEventListener('open', (e) => {
     const id = (e as CustomEvent).detail;
