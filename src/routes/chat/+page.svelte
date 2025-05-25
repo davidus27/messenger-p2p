@@ -1,6 +1,9 @@
 <script lang="ts">
-    import Chat from './Chat.svelte';
-    import type { Person, MessageFeed } from './Chat.svelte';
+    import Chat from '$lib/components/Chat.svelte';
+    import { chatStore } from '$lib/stores/chat';
+    import type { Person, MessageFeed } from '$lib/types';
+
+    // end of p2p
   
     const lorem =
       'Lorem, ipsum dolor sit amet consectetur adipisicing elit. Provident blanditiis quidem dolorum ab similique. Voluptatibus quibusdam unde mollitia corrupti assumenda libero. Quibusdam culpa illum unde asperiores accusantium! Unde, cupiditate tenetur.';

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Popover from './Popover.svelte'; 
+    import Popover from '$lib/components/Popover.svelte'; 
     import { onMount } from 'svelte';
     
     function handleSubmit(event: CustomEvent) {
