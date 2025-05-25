@@ -17,45 +17,31 @@
     let currentPersonId: number = people[0].id;
   
     // Messages
-    let messageFeed: MessageFeed[] = [
-      {
-        id: 0,
-        host: true,
-        avatar: 48,
-        name: 'Jane',
-        timestamp: 'Yesterday @ 2:30pm',
-        message: lorem,
-        color: 'preset-tonal-primary'
-      },
-      {
-        id: 1,
-        host: false,
-        avatar: 14,
-        name: 'Michael',
-        timestamp: 'Yesterday @ 2:45pm',
-        message: lorem,
-        color: 'preset-tonal-primary'
-      },
-      {
-        id: 2,
-        host: true,
-        avatar: 48,
-        name: 'Jane',
-        timestamp: 'Yesterday @ 2:50pm',
-        message: lorem,
-        color: 'preset-tonal-primary'
-      },
-      {
-        id: 3,
-        host: false,
-        avatar: 14,
-        name: 'Michael',
-        timestamp: 'Yesterday @ 2:52pm',
-        message: lorem,
-        color: 'preset-tonal-primary'
+    let messageFeeds = new Map<number, MessageFeed[]>();
+    
+    // Initialize message feeds for each person
+    people.forEach(person => {
+      const numMessages = Math.floor(Math.random() * 5) + 1; // Random number between 1-5 messages
+      const messages: MessageFeed[] = [];
+      
+      for (let i = 0; i < numMessages; i++) {
+        const isHost = Math.random() > 0.5; // Randomly alternate between host/user
+        messages.push({
+          id: i,
+          host: isHost,
+          avatar: isHost ? 48 : person.avatar,
+          name: isHost ? 'Jane' : person.name,
+          timestamp: `Yesterday @ ${2 + i}:${Math.floor(Math.random() * 60).toString().padStart(2,'0')}pm`,
+          message: lorem,
+          color: 'preset-tonal-primary'
+        });
       }
-    ];
+      
+      messageFeeds.set(person.id, messages);
+    });
+
     let currentMessage = '';
+    let messageFeed = messageFeeds.get(currentPersonId) || [];
   
     function getCurrentTimestamp(): string {
       return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
@@ -71,14 +57,20 @@
         message: message,
         color: 'preset-tonal-primary'
       };
-      // Update the message feed
-      messageFeed = [...messageFeed, newMessage];
+      
+      // Update the current person's message feed
+      const currentFeed = messageFeeds.get(currentPersonId) || [];
+      messageFeeds.set(currentPersonId, [...currentFeed, newMessage]);
+      messageFeed = messageFeeds.get(currentPersonId) || [];
+      
       // Clear prompt
       currentMessage = '';
     }
   
     function handlePersonSelect(personId: number) {
       currentPersonId = personId;
+      // Switch to the selected person's message feed
+      messageFeed = messageFeeds.get(personId) || [];
     }
 </script>
   

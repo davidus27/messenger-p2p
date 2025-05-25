@@ -30,12 +30,20 @@
 	export let onPersonSelect: (personId: number) => void;
 
 	let searchQuery: string = '';
+	let textareaElement: HTMLTextAreaElement;
 
 	const getFilteredPeople = () => {
 		if (searchQuery.length === 0) {
 			return people;
 		}
 		return people.filter((person) => person.name.toLowerCase().includes(searchQuery.toLowerCase()));
+	};
+
+	const autoResizeTextarea = () => {
+		if (textareaElement) {
+			textareaElement.style.height = 'auto';
+			textareaElement.style.height = textareaElement.scrollHeight + 'px';
+		}
 	};
 
 	const getCurrentPerson = (): string => {
@@ -53,6 +61,10 @@
 	}
 
 	function onPromptKeydown(event: KeyboardEvent) {
+		// if shift and enter is pressed, it's a new line
+		if (event.shiftKey && event.code === 'Enter') {
+			return;
+		}
 		if (['Enter'].includes(event.code)) {
 			event.preventDefault();
 			sendNewMessage();
@@ -65,14 +77,34 @@
 		}
 		onMessageAdd(currentMessage);
 		currentMessage = '';
+		// Reset textarea height after clearing message
+		setTimeout(() => {
+			if (textareaElement) {
+				textareaElement.style.height = 'auto';
+			}
+		}, 0);
 		scrollChatBottom('smooth');
 	};
 
 	const switchToChat = (personId: number) => {
+        console.log("switchToChat", personId);
+		// this will change the chat to the personId
 		currentPersonId = personId;
 		onPersonSelect(personId);
 		searchQuery = '';
+		// Scroll to bottom of chat when switching
+		scrollChatBottom('instant');
 	};
+
+    const processTextMessage = (message: string) => {
+        // trim the newlines after the last character in the text
+        // Trim trailing and leading newlines
+        message = message.trim();
+
+        // if message contains non utf-8 safe characters, remove them
+        message = message.replace(/[^\x00-\x7F]/g, '');
+        return message;
+    };
 
 	// When DOM is mounted, scroll to bottom
 	onMount(() => {
@@ -80,7 +112,7 @@
 	});
 </script>
 
-<section class="card bg-surface-100-900 rounded-container overflow-hidden">
+<section class="card bg-surface-100-900 rounded-container overflow-hidden h-full lg:h-screen">
 	<div class="chat grid h-full w-full grid-cols-1 lg:grid-cols-[30%_1fr]">
 		<!-- Navigation -->
 		<div class="border-surface-200-800 hidden grid-rows-[auto_1fr_auto] border-r-[1px] lg:grid">
@@ -112,7 +144,7 @@
 			<footer class="border-surface-200-800 border-t-[1px] p-4">(footer)</footer>
 		</div>
 		<!-- Chat -->
-		<div class="grid-row-[1fr_auto] grid">
+		<div class="grid h-full grid-rows-[auto_1fr_auto]">
 			<!-- Conversation -->
 			<!-- Name of the person -->
 			<div class="border-surface-200-800 border-b-[1px] p-5">
@@ -128,7 +160,7 @@
 									<p class="font-bold">{bubble.name}</p>
 									<small class="opacity-50">{bubble.timestamp}</small>
 								</header>
-								<p>{bubble.message}</p>
+								<p class="whitespace-pre-wrap">{processTextMessage(bubble.message)}</p>
 							</div>
 						</div>
 					{:else}
@@ -138,7 +170,7 @@
 									<p class="font-bold">{bubble.name}</p>
 									<small class="opacity-50">{bubble.timestamp}</small>
 								</header>
-								<p>{bubble.message}</p>
+								<p class="whitespace-pre-wrap">{bubble.message}</p>
 							</div>
 							<AvatarImage name={bubble.name} small={true} />
 						</div>
@@ -146,19 +178,21 @@
 				{/each}
 			</section>
 			<!-- Prompt -->
-			<section class="border-surface-200-800 border-t-[1px] p-4">
+			<section class="border-surface-200-800 border-t-[1px] p-5">
 				<div
 					class="input-group divide-surface-200-800 rounded-container-token grid-cols-[auto_1fr_auto] divide-x"
 				>
-					<button class="input-group-cell preset-tonal">+</button>
+					<button class="input-group-cell preset-tonal p-3">+</button>
 					<textarea
+						bind:this={textareaElement}
 						bind:value={currentMessage}
-						class="resize-none border-0 bg-transparent ring-0"
+						class="resize-none border-0 bg-transparent ring-0 p-3"
 						name="prompt"
 						id="prompt"
 						placeholder="Write a message..."
 						rows="1"
 						on:keydown={onPromptKeydown}
+						on:input={autoResizeTextarea}
 					></textarea>
 					<button
 						class="input-group-cell {currentMessage ? 'preset-filled-primary-500' : 'preset-tonal'}"
