@@ -6,10 +6,12 @@
     export let currentPersonId: number;
     export let onPersonSelect: (personId: number) => void;
     export let searchQuery: string = '';
-    export let scrollChatBottom: (instant: string) => void;
+    export let scrollChatBottom: (behavior?: 'auto' | 'instant' | 'smooth') => void;
 
     function getFilteredPeople() {
-        return people.filter(person => person.id !== currentPersonId);
+        return people.filter(person => 
+            person.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
     }
 
     const switchToChat = (personId: number) => {

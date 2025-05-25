@@ -4,7 +4,7 @@
 	import DOMPurify from 'dompurify';
 
 	const generateAvatar = (avatarId: string): string => {
-		const svgContent = avatar(avatarId); // SVG string from library
+		const svgContent = avatar(avatarId, { blackout: true }); // SVG string from library
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(svgContent, 'image/svg+xml');
 

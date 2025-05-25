@@ -76,9 +76,9 @@
 			<div class="border-surface-200-800 border-b-[1px] p-5">
 				<p class="font-bold">Chat with {getCurrentPerson()}</p>
 			</div>
-			<ChatFeed {messageFeed} {elemChat} />
+			<ChatFeed {messageFeed} bind:elemChat />
 			<!-- Prompt -->
-            <Prompt {textareaElement} {currentMessage} {sendNewMessage} />
+            <Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
 		</div>
 	</div>
 </section>
