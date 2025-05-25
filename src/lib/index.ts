@@ -230,12 +230,7 @@ class PeerService extends EventTarget {
       });
     }
   
-    private ensureConnection(id: string): any {
-      if (id === this.peer.id) {
-        alert("Cannot chat with yourself");
-        return null;
-      }
-  
+    private ensureConnection(id: string): any {  
       if (this.connections[id]?.open) return this.connections[id];
   
       const conn = this.connections[id] || this.peer.connect(id, { reliable: true });

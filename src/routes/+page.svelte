@@ -11,6 +11,14 @@
       sendMessage,
       switchChannel
     } = chatStore;
+
+    const makeConnectionWith = (id: string) => {
+      if (id === chat.myId) {
+        alert("Cannot chat with yourself");
+        return;
+      }
+      connectToPeer(id);
+    }
   
     $: chat = $chatStore;
 </script>
@@ -31,27 +39,25 @@
           class="input w-full"
         />
       </label>
-      <button class="btn btn-primary w-full mt-2" on:click={() => connectToPeer(peerIdInput)}>Connect</button>
+      <button class="btn btn-primary w-full mt-2" on:click={() => makeConnectionWith(peerIdInput)}>Connect</button>
     </section>
   
     <section class="w-full max-w-md mb-6">
       <h2 class="text-xl font-semibold mb-2">Channels</h2>
       <ul class="space-y-2">
-        {#if chat}
         {#each chat.channels as channel}
           <li class="flex justify-between items-center p-2 rounded cursor-pointer {channel === chat.currentChannel ? 'bg-primary-100' : 'bg-base-200'}">
-            <span on:click={() => switchChannel(channel)} class="truncate">{channel}</span>
+            <button type="button" on:click={() => switchChannel(channel)} class="truncate text-left">{channel}</button>
             <button class="btn btn-sm btn-error" on:click={() => removeChannel(channel)}>Remove</button>
           </li>
         {/each}
-        {/if}
       </ul>
     </section>
   
     <section class="w-full max-w-md">
       <h2 class="text-xl font-semibold mb-2">Chat</h2>
       <div class="bg-base-200 p-4 rounded h-64 overflow-y-auto mb-4">
-        {#if chat?.currentChannel}
+        {#if chat.currentChannel}
         {#each chat.messages[chat.currentChannel] || [] as message}
         <div class="mb-2 text-sm">
             <span class="{message.fromMe ? 'text-right block text-primary' : 'text-left block text-secondary'}">

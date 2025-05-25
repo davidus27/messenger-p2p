@@ -4,8 +4,8 @@ import PeerService from '$lib/index';
 function createChatStore() {
   const { subscribe, set, update } = writable({
     myId: '',
-    currentChannel: null,
-    channels: [],
+    currentChannel: null as string | null,
+    channels: [] as string[],
     messages: {} as Record<string, { text: string; fromMe: boolean }[]>,
   });
 
@@ -17,9 +17,19 @@ function createChatStore() {
     loadChannels();
   });
 
+  peer.addEventListener('connection', (e) => {
+    console.log('connection', e);
+    const conn = (e as CustomEvent).detail;
+    addChannel(conn.peer, false);
+  });
+
   peer.addEventListener('data', (e) => {
+    console.log('data', e);
     const { conn, data } = (e as CustomEvent).detail;
-    if (data.type === 'msg') {
+    if (data.type === 'ack') {
+      addChannel(conn.peer, false);
+    }
+    else if (data.type === 'msg') {
       update(state => {
         const existing = state.messages[conn.peer] || [];
         const next = [...existing, { text: data.message, fromMe: false }];
@@ -32,6 +42,7 @@ function createChatStore() {
   });
 
   function loadChannels() {
+    console.log('loadChannels');
     const saved = JSON.parse(localStorage.getItem('channels') || '[]');
     saved.forEach((id: string) => {
       addChannel(id, false);
@@ -40,6 +51,7 @@ function createChatStore() {
   }
 
   function addChannel(id: string, autoSwitch = true) {
+    console.log('addChannel', id, autoSwitch);
     update(state => {
       if (state.channels.includes(id)) return state;
       const channels = [...state.channels, id];
