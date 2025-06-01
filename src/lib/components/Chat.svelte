@@ -5,7 +5,7 @@
     import Prompt from '$lib/components/Prompt.svelte';
     import ChatFeed from '$lib/components/ChatFeed.svelte';
     import FriendHeader from './FriendHeader.svelte';
-	import Popover from '$lib/components/Popover.svelte';
+	import Dialog from '$lib/components/Dialog.svelte';
 
 
 	// Props
@@ -34,7 +34,7 @@
 	const startsConnection = async (id: string) => {
 		// wait for 5 second
 		await new Promise(resolve => setTimeout(resolve, 5000));
-		return false;
+		return true;
 	}
 
 
@@ -59,7 +59,7 @@
 	});
 </script>
 
-<section class="card bg-surface-100-900 rounded-container overflow-hidden h-full lg:h-screen">
+<section class="card bg-surface-100-900 rounded-container overflow-hidden lg:h-screen">
 	<div class="chat grid h-full w-full grid-cols-1 lg:grid-cols-[30%_1fr]">
 		<!-- Navigation -->
 		<div class="border-surface-200-800 hidden grid-rows-[auto_1fr_auto] border-r-[1px] lg:grid">
@@ -73,7 +73,7 @@
 
             <!-- <Popover/> -->
             <div class="border-surface-200-800 border-t-[1px] p-4">
-                <Popover {isValid} canConnect={startsConnection} />
+                <Dialog {isValid} canConnect={startsConnection} />
             </div>
 		</div>
 		<!-- Chat -->

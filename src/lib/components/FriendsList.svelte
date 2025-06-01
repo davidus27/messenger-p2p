@@ -1,6 +1,6 @@
 <script lang="ts">
     import AvatarImage from './AvatarImage.svelte';
-    import type { Person } from './types';
+    import type { Person } from '$lib/types';
 
     export let people: Person[] = [];
     export let currentPersonId: number;

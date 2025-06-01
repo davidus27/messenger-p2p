@@ -1,6 +1,6 @@
 <script lang="ts">
 	import AvatarImage from './AvatarImage.svelte';
-	import type { MessageFeed } from './types';
+	import type { MessageFeed } from '$lib/types';
 
 	export let messageFeed: MessageFeed[];
 	export let elemChat: HTMLElement;
