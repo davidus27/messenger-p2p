@@ -57,7 +57,7 @@
     
 </script>
 
-<section bind:this={elemChat} class="max-h-[500px] space-y-4 overflow-y-auto p-4">
+<section bind:this={elemChat} class="max-h-[800px] space-y-4 overflow-y-auto p-4">
 	{#each messageFeed as bubble}
 		{#if bubble.host === true}
 			<div class="grid grid-cols-[auto_1fr] gap-2">
