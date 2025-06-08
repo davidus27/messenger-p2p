@@ -101,49 +101,57 @@
 <dialog
 	bind:this={elemModal}
 	data-dialog
-	class="rounded-container bg-surface-100-900 backdrop:bg-surface-50/75 dark:backdrop:bg-surface-950/75 top-1/2 left-1/2 z-10 max-w-[640px] -translate-1/2 space-y-4 p-4 text-inherit"
+	class="rounded-container select-none bg-surface-100-900 backdrop:bg-surface-50/75 dark:backdrop:bg-surface-950/75 top-1/2 left-1/2 z-10 max-w-[640px] -translate-1/2 space-y-4 p-4 text-inherit"
     onclick={() => elemModal?.close()}
     >
-	<h2 class="mb-4 text-xl font-bold">Add new friend</h2>
+	<div
+		onclick={(e) => e.stopPropagation()}
+		onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') e.stopPropagation(); }}
+		tabindex="0"
+		role="dialog"
+		aria-modal="true"
+	>
+		<h2 class="mb-4 text-xl font-bold">Add new friend</h2>
 
-	<div class="mb-4 space-y-2">
-		<label for="friendId" class="block text-sm font-medium"> Input their ID: </label>
-		<input
-			id="friendId"
-			type="text"
-			placeholder="Enter friend's ID"
-			class="input w-full {showError ? 'border-error-500 animate-shake' : ''}"
-			bind:value={friendId}
-			onkeydown={handleKeydown}
-			oninput={handleInput}
-			disabled={isConnecting}
-		/>
+		<div class="mb-4 space-y-2">
+			<label for="friendId" class="block text-sm font-medium"> Input their ID: </label>
+			<input
+				id="friendId"
+				type="text"
+				placeholder="Enter friend's ID"
+				class="input w-full {showError ? 'border-error-500 animate-shake' : ''}"
+				bind:value={friendId}
+				onkeydown={handleKeydown}
+				oninput={handleInput}
+				disabled={isConnecting}
+			/>
 
-		<button
-			type="button"
-			class="btn variant-filled-primary mt-2"
-			onclick={handleSubmit}
-			disabled={isConnecting}
-		>
-			<BadgePlus size={20} />
-		</button>
+			<button
+				type="button"
+				class="btn variant-filled-primary mt-2"
+				onclick={handleSubmit}
+				disabled={isConnecting}
+			>
+				<BadgePlus size={20} />
+			</button>
 
-		{#if showError}
-			<p class="text-error-500 text-sm">{errorMessage}</p>
-		{/if}
-	</div>
-
-	{#if isConnecting}
-		<div class="mt-4 flex flex-col items-center gap-2">
-			<Progress value={progressValue} meterAnimate="my-custom-animation" />
-			<span class="text-muted text-xs">Connecting...</span>
+			{#if showError}
+				<p class="text-error-500 text-sm">{errorMessage}</p>
+			{/if}
 		</div>
-	{/if}
 
-	<p class="text-muted mt-6 text-sm">
-		Press <kbd class="kbd">esc</kbd> or click outside to dismiss.
-	</p>
-</dialog>
+		{#if isConnecting}
+			<div class="mt-4 flex flex-col items-center gap-2">
+				<Progress value={progressValue} meterAnimate="my-custom-animation" />
+				<span class="text-muted text-xs">Connecting...</span>
+			</div>
+		{/if}
+
+		<p class="text-muted mt-6 text-sm">
+			Press <kbd class="kbd">esc</kbd> or click outside to dismiss.
+		</p>
+	</div>
+div</dialog>
 <!-- Interface -->
 <div class="flex items-center justify-center">
 	<!-- Trigger -->
