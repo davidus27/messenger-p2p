@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Person, MessageFeed } from '$lib/types';
+	import type { Person, MessageFeed } from '$lib/types/types';
 	import FriendsList from '$lib/components/FriendsList.svelte';
     import Prompt from '$lib/components/Prompt.svelte';
     import ChatFeed from '$lib/components/ChatFeed.svelte';
     import FriendHeader from './FriendHeader.svelte';
-	import Dialog from '$lib/components/Dialog.svelte';
 	import AddFriendDialog from './AddFriendDialog.svelte';
 
 
@@ -64,17 +63,12 @@
 	<div class="chat grid h-full w-full grid-cols-1 lg:grid-cols-[30%_1fr]">
 		<!-- Navigation -->
 		<div class="border-surface-200-800 hidden grid-rows-[auto_1fr_auto] border-r-[1px] lg:grid">
-			<!-- Header -->
-			<header class="pt-18 border-surface-200-800 border-b-[1px] p-4">
-				<input bind:value={searchQuery} class="input" type="search" placeholder="Search..." />
-			</header>
 			<!-- List -->
-			<FriendsList {people} {currentPersonId} {onPersonSelect} {searchQuery} {scrollChatBottom} />
+			<FriendsList {people} {currentPersonId} {onPersonSelect} {scrollChatBottom} />
 			<!-- Footer -->
 
             <!-- <Popover/> -->
             <div class="border-surface-200-800 border-t-[1px] p-4">
-                <!-- <Dialog {isValid} canConnect={startsConnection} /> -->
 				 <AddFriendDialog {isValid} canConnect={startsConnection} />
             </div>
 		</div>
