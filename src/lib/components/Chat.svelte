@@ -64,7 +64,7 @@
 		<!-- Navigation -->
 		<div class="border-surface-200-800 hidden grid-rows-[auto_1fr_auto] border-r-[1px] lg:grid">
 			<!-- Header -->
-			<header class="border-surface-200-800 border-b-[1px] p-4">
+			<header class="pt-18 border-surface-200-800 border-b-[1px] p-4">
 				<input bind:value={searchQuery} class="input" type="search" placeholder="Search..." />
 			</header>
 			<!-- List -->
