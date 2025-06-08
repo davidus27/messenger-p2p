@@ -12,6 +12,6 @@
 	};
 </script>
 
-<div class="border-surface-200-800 border-b-[1px] p-5">
+<div class="p-5">
     <p class="font-bold">Chat with {getCurrentPerson()}</p>
 </div>
