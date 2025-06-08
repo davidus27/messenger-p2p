@@ -8,7 +8,22 @@
 @import '@skeletonlabs/skeleton/themes/modern';
 @import '@skeletonlabs/skeleton/themes/catppuccin';
 @import '@skeletonlabs/skeleton/themes/rocket';
+@import '@skeletonlabs/skeleton/themes/fennec';
+
+
+
+/* font imports */
+@import '@fontsource/special-elite';
+
 
 @source '../node_modules/@skeletonlabs/skeleton-svelte/dist';
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+
+[data-theme='fennec'] {
+  --heading-font-family: 'Special Elite', system-ui;
+  --base-font-family: 'Special Elite', system-ui;
+  --anchor-font-family: 'inherit';
+}
+
