@@ -6,6 +6,7 @@
     import ChatFeed from '$lib/components/ChatFeed.svelte';
     import FriendHeader from './FriendHeader.svelte';
 	import Dialog from '$lib/components/Dialog.svelte';
+	import AddFriendDialog from './AddFriendDialog.svelte';
 
 
 	// Props
@@ -73,7 +74,8 @@
 
             <!-- <Popover/> -->
             <div class="border-surface-200-800 border-t-[1px] p-4">
-                <Dialog {isValid} canConnect={startsConnection} />
+                <!-- <Dialog {isValid} canConnect={startsConnection} /> -->
+				 <AddFriendDialog {isValid} canConnect={startsConnection} />
             </div>
 		</div>
 		<!-- Chat -->
