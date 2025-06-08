@@ -44,17 +44,11 @@
 		return parts;
 	};
 
-
-    const processTextMessage = (message: string) => {
+	const processTextMessage = (message: string) => {
 		// trim the newlines after the last character in the text
 		// Trim trailing and leading newlines
-		message = message.trim();
-
-		// if message contains non utf-8 safe characters, remove them
-		message = message.replace(/[^\x00-\x7F]/g, '');
-		return message;
+		return message.trim();
 	};
-    
 </script>
 
 <section bind:this={elemChat} class="max-h-[800px] space-y-4 overflow-y-auto p-4">
@@ -70,12 +64,16 @@
 					<p class="whitespace-pre-wrap">
 						{#each splitTextAndLinks(processTextMessage(bubble.message)) as part}
 							{#if part.type === 'link'}
-								<a
-									href={part.content}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="text-primary-500 hover:underline">{part.content}</a
-								>
+								{#if part.content.startsWith('https://') && part.content.endsWith('.gif')}
+									<img src={part.content} alt="GIF" class="h-auto max-w-full rounded" />
+								{:else}
+									<a
+										href={part.content}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="text-primary-500 hover:underline">{part.content}</a
+									>
+								{/if}
 							{:else}
 								{part.content}
 							{/if}
