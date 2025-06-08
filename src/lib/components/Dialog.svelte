@@ -1,6 +1,9 @@
 <script lang="ts">
-	let { children } = $props();
+	import { Rabbit } from '@lucide/svelte/icons';
+
+	let { children } = $props<{ children: null | (() => any) }>();
 	let elemModal: HTMLDialogElement | null = null;
+	let rotating = $state(false);
 
 	function openDialog() {
 		if (elemModal) {
@@ -13,7 +16,6 @@
 		}
 	}
 	export { openDialog, closeDialog };
-
 </script>
 
 <!-- Dialog -->
@@ -32,18 +34,24 @@
 		role="dialog"
 		aria-modal="true"
 	>
-	
-	{#if children}
-		{@render children()}
-	{/if}
-		
+		{#if children}
+			{@render children()}
+		{:else}
+			<div class="text-center text-gray-500">Empty dialog.</div>
+			<div
+				onmouseenter={() => (rotating = true)}
+				onmouseleave={() => (rotating = false)}
+				class="transform: flex items-center justify-center p-3 text-gray-500"
+			>
+				<Rabbit class="animate-bunny-jump h-12 w-12" />
+			</div>
+		{/if}
+
 		<p class="text-muted mt-6 text-sm">
 			Press <kbd class="kbd">esc</kbd> or click outside to dismiss.
 		</p>
 	</div>
-	div
 </dialog>
-
 
 <style>
 	/* NOTE: add the following styles to your global stylesheet. */
