@@ -1,7 +1,7 @@
 <script lang="ts">
-    // import Popover from '$lib/components/Popover.svelte'; 
     import { onMount } from 'svelte';
     import Dialog from '$lib/components/Dialog.svelte';
+	import NewDialog from '$lib/components/NewDialog.svelte';
     
     function handleSubmit(event: CustomEvent) {
         const { friendId } = event.detail;
@@ -32,6 +32,5 @@
 </script>
 
 <div class="flex justify-center items-center h-screen">
-    <!-- <Popover {isValid} canConnect={startsConnection} /> -->
-    <Dialog {isValid} canConnect={startsConnection} />
+    <NewDialog />    
 </div>
