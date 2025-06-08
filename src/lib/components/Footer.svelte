@@ -12,7 +12,7 @@
 
 
 <!-- button to toggle dark mode -->
-<header class="flex justify-end">
+<header class="fixed top-0 left-0 w-full z-50 flex justify-end shadow">
 	<div class="flex-1 flex items-center gap-8 px-8 py-2">
 		<nav>
 			<a href="/" class="text-2xl font-bold">Chato</a>
@@ -21,5 +21,4 @@
 		<p class="text-sm opacity-70">Chat with anyone, anywhere</p>
 		<LightSwitch bind:mode={mode} />
 	</div>
-	
 </header>
