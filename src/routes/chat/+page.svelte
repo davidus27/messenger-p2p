@@ -1,7 +1,7 @@
 <script lang="ts">
     import Chat from '$lib/components/Chat.svelte';
     import { chatStore } from '$lib/stores/chat';
-    import type { Person, MessageFeed } from '$lib/types';
+    import type { Person, Message } from '$lib/types/types';
 
     // end of p2p
   
@@ -15,17 +15,17 @@
       { id: 2, avatar: 31, name: 'Susan' },
       { id: 3, avatar: 56, name: 'Joey' },
       { id: 4, avatar: 24, name: 'Lara' },
-      { id: 5, avatar: 9, name: 'Melissa' }
+      { id: 5, avatar: 9, name: 'Melissa' },
     ];
     let currentPersonId: number = people[0].id;
   
     // Messages
-    let messageFeeds = new Map<number, MessageFeed[]>();
+    let messageFeeds = new Map<number, Message[]>();
     
     // Initialize message feeds for each person
     people.forEach(person => {
       const numMessages = Math.floor(Math.random() * 5) + 1; // Random number between 1-5 messages
-      const messages: MessageFeed[] = [];
+      const messages: Message[] = [];
       
       for (let i = 0; i < numMessages; i++) {
         const isHost = Math.random() > 0.5; // Randomly alternate between host/user
@@ -41,47 +41,12 @@
       }
       
       messageFeeds.set(person.id, messages);
-    });
+    });  
 
-    let currentMessage = '';
-    let messageFeed = messageFeeds.get(currentPersonId) || [];
-  
-    function getCurrentTimestamp(): string {
-      return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
-    }
-  
-    function handleMessageAdd(message: string) {
-      const newMessage = {
-        id: messageFeed.length,
-        host: true,
-        avatar: 48,
-        name: 'Jane',
-        timestamp: `Today @ ${getCurrentTimestamp()}`,
-        message: message,
-        color: 'preset-tonal-primary'
-      };
-      
-      // Update the current person's message feed
-      const currentFeed = messageFeeds.get(currentPersonId) || [];
-      messageFeeds.set(currentPersonId, [...currentFeed, newMessage]);
-      messageFeed = messageFeeds.get(currentPersonId) || [];
-      
-      // Clear prompt
-      currentMessage = '';
-    }
-  
-    function handlePersonSelect(personId: number) {
-      currentPersonId = personId;
-      // Switch to the selected person's message feed
-      messageFeed = messageFeeds.get(personId) || [];
-    }
 </script>
   
 <Chat
   {people}
   {currentPersonId}
-  {messageFeed}
-  {currentMessage}
-  onMessageAdd={handleMessageAdd}
-  onPersonSelect={handlePersonSelect}
+  {messageFeeds}
 />

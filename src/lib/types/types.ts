@@ -4,7 +4,7 @@ export interface Person {
     avatar: number;
     name: string;
 }
-export interface MessageFeed {
+export interface Message {
     id: number;
     host: boolean;
     avatar: number;
