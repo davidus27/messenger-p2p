@@ -113,7 +113,7 @@
 
 
 <!-- Interface -->
-<div class="flex items-center justify-center">
+<div class="border-surface-200-800 border-t-[1px] p-4 flex items-center justify-center">
 	<!-- Trigger -->
 	<button
 		class="btn preset-filled"

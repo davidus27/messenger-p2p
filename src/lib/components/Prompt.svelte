@@ -32,7 +32,7 @@
 	}
 </script>
 
-<section class="flex flex-col gap-3 p-4 border-t border-surface-200-800">
+<section class="sticky bottom-0 bg-surface-100-900 flex flex-col gap-3 p-4 border-t border-surface-200-800">
 	<div
 		class="input-group divide-surface-200-800 rounded-container-token grid-cols-[auto_1fr_auto] divide-x shadow-sm"
 	>

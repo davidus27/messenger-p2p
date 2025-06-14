@@ -94,25 +94,16 @@
 		<div class="border-surface-200-800 hidden grid-rows-[auto_1fr_auto] border-r-[1px] lg:grid">
 			<!-- List -->
 			<FriendsList {people} {currentPersonId} onPersonSelect={handlePersonSelect} {scrollChatBottom} />
-			<!-- Footer -->
-
-			<!-- <Popover/> -->
-			<div class="border-surface-200-800 border-t-[1px] p-4">
-				<AddFriendDialog {isValid} canConnect={startsConnection} />
-			</div>
+			<AddFriendDialog {isValid} canConnect={startsConnection} />
 		</div>
 		<!-- Chat -->
 		<div class="flex h-full flex-col">
 			<!-- Name of the person -->
 			<FriendHeader {people} {currentPersonId} />
 			<!-- Messages area takes up remaining space and is scrollable -->
-			<div class="flex-1 min-h-0 overflow-y-auto">
-				<ChatFeed {messages} bind:elemChat />
-			</div>
+			<ChatFeed {messages} bind:elemChat />
 			<!-- Prompt -->
-			<div class="sticky bottom-0 bg-surface-100-900">
-				<Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
-			</div>
+			<Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
 		</div>
 	</div>
 </section>
