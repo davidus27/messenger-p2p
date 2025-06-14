@@ -39,6 +39,8 @@
 		{:else}
 			<div class="text-center text-gray-500">Empty dialog.</div>
 			<div
+				role="button"
+				tabindex="0"
 				onmouseenter={() => (rotating = true)}
 				onmouseleave={() => (rotating = false)}
 				class="transform: flex items-center justify-center p-3 text-gray-500"

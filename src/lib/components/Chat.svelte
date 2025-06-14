@@ -1,22 +1,24 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import type { Person, MessageFeed } from '$lib/types/types';
+	import type { Person, Message } from '$lib/types/types';
 	import FriendsList from '$lib/components/FriendsList.svelte';
-    import Prompt from '$lib/components/Prompt.svelte';
-    import ChatFeed from '$lib/components/ChatFeed.svelte';
-    import FriendHeader from './FriendHeader.svelte';
+	import Prompt from '$lib/components/Prompt.svelte';
+	import ChatFeed from '$lib/components/chat/MessageFeed.svelte';
+	import FriendHeader from './FriendHeader.svelte';
 	import AddFriendDialog from './AddFriendDialog.svelte';
-
 
 	// Props
 	export let people: Person[] = [];
 	export let currentPersonId: number;
-	export let messageFeed: MessageFeed[] = [];
-	export let currentMessage: string = '';
-	export let onMessageAdd: (message: string) => void;
-	export let onPersonSelect: (personId: number) => void;
+	export let messageFeeds: Map<number, Message[]> = new Map();
+	// export let onMessageAdd: (message: string) => void;
+	// export let onPersonSelect: (personId: number) => void;
 
-	let searchQuery: string = '';
+
+	let messages = messageFeeds.get(currentPersonId) || [];
+
+	let currentMessage: string = '';
+
 	let textareaElement: HTMLTextAreaElement;
 
 	let elemChat: HTMLElement;
@@ -25,24 +27,23 @@
 		setTimeout(() => {
 			elemChat.scrollTo({ top: elemChat.scrollHeight, behavior });
 		}, 100);
-	}
+	};
 
 	const isValid = (id: string) => {
 		return /^[0-9-]+$/.test(id) && id.length === 10;
-	}
+	};
 
 	const startsConnection = async (id: string) => {
 		// wait for 5 second
-		await new Promise(resolve => setTimeout(resolve, 5000));
+		await new Promise((resolve) => setTimeout(resolve, 5000));
 		return true;
-	}
-
+	};
 
 	const sendNewMessage = () => {
 		if (currentMessage.length === 0 || currentMessage.trim() === '') {
 			return;
 		}
-		onMessageAdd(currentMessage);
+		handleMessageAdd(currentMessage);
 		currentMessage = '';
 		// Reset textarea height after clearing message
 		setTimeout(() => {
@@ -52,6 +53,34 @@
 		}, 0);
 		scrollChatBottom('smooth');
 	};
+
+	function getCurrentTimestamp(): string {
+		return new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+	}
+
+	function handleMessageAdd(message: string) {
+		const newMessage = {
+			id: message.length,
+			host: true,
+			avatar: 48,
+			name: 'Jane',
+			timestamp: `Today @ ${getCurrentTimestamp()}`,
+			message: message,
+			color: 'preset-tonal-primary'
+		};
+
+
+		// Update the current person's message feed
+		const currentFeed = messageFeeds.get(currentPersonId) || [];
+		messageFeeds.set(currentPersonId, [...currentFeed, newMessage]);
+		messages = messageFeeds.get(currentPersonId) || [];
+	}
+
+	function handlePersonSelect(personId: number) {
+		currentPersonId = personId;
+		// Switch to the selected person's message feed
+		messages = messageFeeds.get(personId) || [];
+	}
 
 	// When DOM is mounted, scroll to bottom
 	onMount(() => {
@@ -64,22 +93,22 @@
 		<!-- Navigation -->
 		<div class="border-surface-200-800 hidden grid-rows-[auto_1fr_auto] border-r-[1px] lg:grid">
 			<!-- List -->
-			<FriendsList {people} {currentPersonId} {onPersonSelect} {scrollChatBottom} />
+			<FriendsList {people} {currentPersonId} onPersonSelect={handlePersonSelect} {scrollChatBottom} />
 			<!-- Footer -->
 
-            <!-- <Popover/> -->
-            <div class="border-surface-200-800 border-t-[1px] p-4">
-				 <AddFriendDialog {isValid} canConnect={startsConnection} />
-            </div>
+			<!-- <Popover/> -->
+			<div class="border-surface-200-800 border-t-[1px] p-4">
+				<AddFriendDialog {isValid} canConnect={startsConnection} />
+			</div>
 		</div>
 		<!-- Chat -->
 		<div class="grid h-full grid-rows-[auto_1fr_auto]">
 			<!-- Conversation -->
 			<!-- Name of the person -->
-            <FriendHeader {people} {currentPersonId} />
-			<ChatFeed {messageFeed} bind:elemChat />
+			<FriendHeader {people} {currentPersonId} />
+			<ChatFeed {messages} bind:elemChat />
 			<!-- Prompt -->
-            <Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
+			<Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
 		</div>
 	</div>
 </section>
