@@ -105,8 +105,8 @@
 		<div class="flex h-full flex-col">
 			<!-- Name of the person -->
 			<FriendHeader {people} {currentPersonId} />
-			<!-- Messages area with flex-grow and overflow -->
-			<div class="flex-1 overflow-y-auto">
+			<!-- Messages area takes up remaining space and is scrollable -->
+			<div class="flex-1 min-h-0 overflow-y-auto">
 				<ChatFeed {messages} bind:elemChat />
 			</div>
 			<!-- Prompt -->

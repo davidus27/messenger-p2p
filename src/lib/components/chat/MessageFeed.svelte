@@ -7,7 +7,7 @@
 	export let elemChat: HTMLElement;
 </script>
 
-<section bind:this={elemChat} class="max-h-[800px] space-y-4 overflow-y-auto p-4">
+<section bind:this={elemChat} class="flex flex-col space-y-4 overflow-y-auto p-4 pb-32 min-h-0 max-h-[calc(100vh-9rem)]">
 	{#each messages as message}
 		{#if message.host === true}
 			<OutGoingBubble {message} />
