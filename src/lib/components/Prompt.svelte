@@ -32,16 +32,16 @@
 	}
 </script>
 
-<section class="flex flex-col gap-3 p-3">
+<section class="flex flex-col gap-3 p-4 border-t border-surface-200-800">
 	<div
-		class="input-group divide-surface-200-800 rounded-container-token grid-cols-[auto_1fr_auto] divide-x"
+		class="input-group divide-surface-200-800 rounded-container-token grid-cols-[auto_1fr_auto] divide-x shadow-sm"
 	>
-		<button class="input-group-cell preset-tonal p-3">+</button>
+		<button class="input-group-cell preset-tonal p-3 hover:bg-surface-200-800 transition-colors">+</button>
 
 		<textarea
 			bind:this={textareaElement}
 			bind:value={currentMessage}
-			class="max-h-[12rem] resize-none overflow-y-auto border-0 bg-transparent p-3 ring-0"
+			class="max-h-[12rem] resize-none overflow-y-auto border-0 bg-transparent p-3 ring-0 focus:outline-none"
 			name="prompt"
 			id="prompt"
 			placeholder="Write a message..."
@@ -51,7 +51,7 @@
 		></textarea>
 
 		<button
-			class="input-group-cell {currentMessage ? 'preset-filled-primary-500' : 'preset-tonal'}"
+			class="input-group-cell {currentMessage ? 'preset-filled-primary-500' : 'preset-tonal'} p-3 hover:bg-surface-200-800 transition-colors"
 			on:click={sendNewMessage}
 		>
 			<IconSend />
