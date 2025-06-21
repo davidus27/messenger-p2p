@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Message } from '$lib/types/types';
 	import AvatarImage from '$lib/components/AvatarImage.svelte';
-	import { splitTextAndLinks, processTextMessage } from '$lib/utils/chatUtils';
+	import Bubble from './Bubble.svelte';
 
 	export let message: Message;
 </script>
@@ -13,18 +13,7 @@
 			<small class="opacity-50">{message.timestamp}</small>
 		</header>
 		<p class="whitespace-pre-wrap">
-			{#each splitTextAndLinks(processTextMessage(message.message)) as part}
-				{#if part.type === 'link'}
-					<a
-						href={part.content}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="text-primary-500 hover:underline">{part.content}</a
-					>
-				{:else}
-					{part.content}
-				{/if}
-			{/each}
+			<Bubble message={message} />
 		</p>
 	</div>
 	<AvatarImage name={message.name} small={true} />
