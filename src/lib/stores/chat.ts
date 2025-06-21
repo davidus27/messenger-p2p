@@ -11,7 +11,7 @@ function createChatStore(): ChatStoreType {
     messages: {} as Record<string, MessageFormat[]>,
   });
 
-  const peer = new PeerService(localStorage.getItem('peer-id') || null);
+  let peer = new PeerService(localStorage.getItem('peer-id') || null);
 
   peer.addEventListener('open', (e) => {
     const id = (e as CustomEvent).detail;
@@ -101,8 +101,27 @@ function createChatStore(): ChatStoreType {
     });
   }
 
+  function regenerateId() {
+    // Remove peer ID from localStorage and create new connection
+    localStorage.removeItem('peer-id');
+    // Reset channels in localStorage
+    localStorage.setItem('channels', '[]');
+    // Create new peer service with null ID to generate a fresh ID
+    peer = new PeerService(null);
+    // Reset the store state
+    update(state => ({
+      ...state,
+      myId: '',
+      currentChannel: null,
+      channels: [],
+      messages: {}
+    }));
+  }
+
   return {
     subscribe,
+    set,
+    update,
     addChannel,
     removeChannel,
     sendMessage,
@@ -112,7 +131,8 @@ function createChatStore(): ChatStoreType {
       if (!id) return;
       addChannel(id);
       peer.connectTo(id);
-    }
+    },
+    regenerateId
   };
 
 

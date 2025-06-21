@@ -7,7 +7,8 @@
       connectToPeer,
       removeChannel,
       sendMessage,
-      switchChannel
+      switchChannel,
+      regenerateId
     } = chatStore;
 
     $: chat = $chatStore;
@@ -20,4 +21,5 @@
   switchChannel={switchChannel}
   removeChannel={removeChannel}
   connectToPeer={connectToPeer}
+  regenerateId={regenerateId}
 />

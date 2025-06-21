@@ -1,6 +1,5 @@
 <script lang="ts">
     import AvatarImage from './AvatarImage.svelte';
-    import type { Person } from '../types/types';
 
     // Destructure props once
     const {
@@ -45,11 +44,6 @@
         placeholder="Search contacts..."
     />
     </header>
-
-    <!-- remove all contacts -->
-    <button class="button button-danger w-full mb-2" onclick={() => {people.forEach(removeChannel); searchQuery = '';}}>
-        Purge all contacts
-    </button>
 
     <small class="opacity-50">Contacts</small>
 

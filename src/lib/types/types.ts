@@ -18,7 +18,7 @@ export type MessageFormat = {
 
 export type ChatState = {
   myId: string;
-  currentChannel: string;
+  currentChannel: string | null;
   channels: string[];
   messages: Record<string, MessageFormat[]>;
 };
@@ -29,4 +29,5 @@ export type ChatStoreType = Writable<ChatState> & {
   sendMessage: (text: string) => void;
   switchChannel: (id: string) => void;
   connectToPeer: (id: string) => void;
+  regenerateId: () => void;
 };

@@ -13,6 +13,7 @@
 	export let switchChannel: (channel: string) => void;
 	export let removeChannel: (channel: string) => void;
 	export let connectToPeer: (peerId: string) => void;
+	export let regenerateId: () => void;
 
 	// Local state
 	let currentMessage: string = '';
@@ -85,15 +86,31 @@
 		<!-- Navigation -->
 		<div class="border-surface-200-800 hidden grid-rows-[auto_1fr_auto] border-r-[1px] lg:grid">
 			<!-- List -->
-			<FriendsList removeChannel={removeChannel} people={chat.channels} {currentPersonId} onPersonSelect={handlePersonSelect} />
+			<FriendsList
+				{removeChannel}
+				people={chat.channels}
+				{currentPersonId}
+				onPersonSelect={handlePersonSelect}
+			/>
 			<AddFriendDialog id={chat.myId} {isValid} canConnect={startsConnection} />
+
+			<!-- remove all contacts -->
+			<nav class="btn-group preset-outlined-surface-200-800 flex-col p-2 md:flex-row">
+				<button type="button" class="btn preset-filled" onclick={() => chat.channels.forEach(removeChannel)}>Purge contacts</button>
+				<button type="button" class="btn hover:preset-tonal" onclick={() => regenerateId()}>Generate new PeerID</button>
+			</nav>
 		</div>
 		<!-- Chat -->
 		<div class="flex h-full flex-col">
 			<!-- Name of the person -->
 			<FriendHeader people={chat.channels} {currentPersonId} />
 			<!-- Messages area takes up remaining space and is scrollable -->
-			<MessageFeed peerId={currentPersonId} myId={chat.myId} messages={chat.messages[chat.currentChannel]} bind:elemChat />
+			<MessageFeed
+				peerId={currentPersonId}
+				myId={chat.myId}
+				messages={chat.messages[chat.currentChannel]}
+				bind:elemChat
+			/>
 			<!-- Prompt -->
 			<Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
 		</div>
