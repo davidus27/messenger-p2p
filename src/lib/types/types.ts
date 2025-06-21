@@ -5,7 +5,6 @@ export interface Message {
     host?: boolean;
     avatar?: number;
     timestamp?: string;
-    color?: string;
 }
 
 import type { Writable } from 'svelte/store';

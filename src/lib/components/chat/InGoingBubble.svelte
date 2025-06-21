@@ -7,7 +7,7 @@
 </script>
 
 <div class="grid grid-cols-[1fr_auto] gap-2">
-	<div class="card space-y-2 rounded-tr-none p-4 {message.color}">
+	<div class="card space-y-2 rounded-tr-none p-4 preset-tonal-primary">
 		<header class="flex items-center justify-between">
 			<p class="font-bold">{message.name}</p>
 			<small class="opacity-50">{message.timestamp}</small>
