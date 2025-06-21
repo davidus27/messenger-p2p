@@ -1,12 +1,14 @@
 import { writable } from 'svelte/store';
 import PeerService from '$lib/index';
+import { ChatStoreType, MessageFormat } from '$lib/types/types';
 
-function createChatStore() {
+
+function createChatStore(): ChatStoreType {
   const { subscribe, set, update } = writable({
     myId: '',
     currentChannel: null as string | null,
     channels: [] as string[],
-    messages: {} as Record<string, { text: string; fromMe: boolean }[]>,
+    messages: {} as Record<string, MessageFormat[]>,
   });
 
   const peer = new PeerService(localStorage.getItem('peer-id') || null);
