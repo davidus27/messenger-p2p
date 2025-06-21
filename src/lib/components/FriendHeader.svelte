@@ -1,16 +1,13 @@
 <script lang="ts">
-    import type { Person } from '$lib/types/types';
-	import NewDialog from '$lib/components/NewDialog.svelte';
 
-    export let people: Person[] = [];
+    export let people: string[] = [];
 	export let currentPersonId: string;
 
     const getCurrentPerson = (): string => {
 		if (currentPersonId === undefined) {
 			return 'Unknown';
 		}
-		return people.find((person) => person.id === currentPersonId)?.name ?? 'Unknown';
-		// return people.find((person) => person.id.toString() === currentPersonId)?.name ?? 'Unknown';
+		return people.find((person) => person === currentPersonId) ?? 'Unknown';
 	};
 </script>
 

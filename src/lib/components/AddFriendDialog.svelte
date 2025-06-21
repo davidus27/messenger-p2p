@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import { fade } from 'svelte/transition';
 	import BadgePlus from '@lucide/svelte/icons/badge-plus';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
 	import Dialog from '$lib/components/Dialog.svelte';

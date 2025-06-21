@@ -6,24 +6,18 @@
 	import ChatFeed from '$lib/components/chat/MessageFeed.svelte';
 	import FriendHeader from './FriendHeader.svelte';
 	import AddFriendDialog from './AddFriendDialog.svelte';
-	import { PersonStanding } from '@lucide/svelte';
 
 	// Props
-	// export let people: Person[] = [];
 	export let chat: ChatState;
-	// export let messageFeeds: Map<string, Message[]> = new Map();
 	export let sendMessage: (message: string) => void;
 	export let switchChannel: (channel: string) => void;
 	export let removeChannel: (channel: string) => void;
 	export let connectToPeer: (peerId: string) => void;
 
-	// let messages = messageFeeds.get(currentPersonId) || [];
-
+	// Local state
 	let currentMessage: string = '';
 	let currentPersonId: string = chat.currentChannel || '';
-
 	let textareaElement: HTMLTextAreaElement;
-
 	let elemChat: HTMLElement;
 
 	const scrollChatBottom = (behavior?: 'auto' | 'instant' | 'smooth') => {
@@ -73,21 +67,13 @@
 			message: message,
 			color: 'preset-tonal-primary'
 		};
-
-
-		// Update the current person's message feed
-		// const currentFeed = messageFeeds.get(currentPersonId) || [];
-		// messageFeeds.set(currentPersonId, [...currentFeed, newMessage]);
-		// messages = messageFeeds.get(currentPersonId) || [];
 	}
 
 	function handlePersonSelect(personId: string) {
 		currentPersonId = personId;
 		switchChannel(personId);
-		// Switch to the selected person's message feed
-		// messages = chat.messages[personId] || [];
-		// messages = messageFeeds.get(personId) || [];
 	}
+
 	// When DOM is mounted, scroll to bottom
 	onMount(() => {
 		scrollChatBottom('instant');
