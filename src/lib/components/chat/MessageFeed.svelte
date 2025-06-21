@@ -4,7 +4,8 @@
 	import InGoingBubble from './InGoingBubble.svelte';
 
 	export let messages: MessageFormat[];
-	export let currentPersonId: string;
+	export let peerId: string;
+	export let myId: string;
 	export let elemChat: HTMLElement;
 </script>
 
@@ -14,8 +15,8 @@
 			<OutGoingBubble message={
 				{	
 					message: message.text,
-					id: currentPersonId,
-					name: currentPersonId, // Use currentPersonId as name
+					id: message.messageId,
+					name: myId, // Use currentPersonId as name
 					// Add a timestamp if it doesn't exist
 					timestamp: new Date().toISOString()}
 			} />
@@ -23,8 +24,8 @@
 			<InGoingBubble message={
 				{	
 					message: message.text,
-					id: currentPersonId,
-					name: currentPersonId, // Use currentPersonId as name
+					name: peerId,
+					id: message.messageId, // Use currentPersonId as name
 					// Add a timestamp if it doesn't exist
 					timestamp: new Date().toISOString()}
 			} />

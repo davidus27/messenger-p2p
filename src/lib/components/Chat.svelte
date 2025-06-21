@@ -3,7 +3,7 @@
 	import type { ChatState } from '$lib/types/types';
 	import FriendsList from '$lib/components/FriendsList.svelte';
 	import Prompt from '$lib/components/Prompt.svelte';
-	import ChatFeed from '$lib/components/chat/MessageFeed.svelte';
+	import MessageFeed from '$lib/components/chat/MessageFeed.svelte';
 	import FriendHeader from './FriendHeader.svelte';
 	import AddFriendDialog from './AddFriendDialog.svelte';
 
@@ -93,7 +93,7 @@
 			<!-- Name of the person -->
 			<FriendHeader people={chat.channels} {currentPersonId} />
 			<!-- Messages area takes up remaining space and is scrollable -->
-			<ChatFeed {currentPersonId} messages={chat.messages[chat.currentChannel]} bind:elemChat />
+			<MessageFeed peerId={currentPersonId} myId={chat.myId} messages={chat.messages[chat.currentChannel]} bind:elemChat />
 			<!-- Prompt -->
 			<Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
 		</div>

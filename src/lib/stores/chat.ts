@@ -35,7 +35,10 @@ function createChatStore(): ChatStoreType {
     else if (data.type === 'msg') {
       update(state => {
         const existing = state.messages[conn.peer] || [];
-        const next = [...existing, { text: data.message, fromMe: false }];
+        const next = [...existing, {
+          text: data.message, fromMe: false,
+          messageId: generateId(), peerId: conn.peer
+        }];
         return {
           ...state,
           messages: { ...state.messages, [conn.peer]: next }
@@ -89,7 +92,9 @@ function createChatStore(): ChatStoreType {
 
       const updatedMessages = {
         ...state.messages,
-        [channel]: [...(state.messages[channel] || []), { text, fromMe: true }]
+        [channel]: [...(state.messages[channel] || []), {
+          text, fromMe: true, peerId: channel, messageId: generateId()
+        }]
       };
 
       return { ...state, messages: updatedMessages };
@@ -109,6 +114,11 @@ function createChatStore(): ChatStoreType {
       peer.connectTo(id);
     }
   };
+
+
+  function generateId() {
+    return Math.random().toString(16).slice(2);
+  }
 }
 
 export const chatStore = createChatStore();

@@ -11,7 +11,9 @@ import type { Writable } from 'svelte/store';
 
 export type MessageFormat = {
   text: string; 
-  fromMe: boolean 
+  fromMe: boolean;
+  peerId: string;
+  messageId: string;
 }
 
 export type ChatState = {
