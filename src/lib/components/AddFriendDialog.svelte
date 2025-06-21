@@ -6,6 +6,7 @@
     import Plus from '@lucide/svelte/icons/plus';
 
 	// Props
+	export let id: string;
 	export let isValid: (id: string) => boolean;
 	export let canConnect: (id: string) => Promise<boolean>;
 
@@ -74,9 +75,10 @@
 
 
 <Dialog bind:this={DialogRef}>
-	<h2 class="mb-4 text-xl font-bold">Add new friend</h2>
+	<h2 class="mb-4 text-xl font-bold select-none">Add new friend</h2>
+	<h3 class="mb-4 text-l font-italic">Your Id: {id}</h3>
 
-	<div class="mb-4 space-y-2">
+	<div class="mb-4 space-y-2 select-none">
 		<label for="friendId" class="block text-sm font-medium"> Input their ID: </label>
 		<input
 			id="friendId"

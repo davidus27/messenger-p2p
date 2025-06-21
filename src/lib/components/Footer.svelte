@@ -12,7 +12,7 @@
 
 
 <!-- button to toggle dark mode -->
-<header class="fixed top-0 left-0 w-full z-50 flex justify-end shadow">
+<header class="fixed top-0 left-0 w-full z-50 shadow">
 	<div class="flex-1 flex items-center gap-8 px-8 py-2">
 		<nav>
 			<a href="/" class="text-2xl font-bold">Chato</a>

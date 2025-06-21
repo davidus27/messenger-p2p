@@ -3,13 +3,14 @@
 	import NewDialog from '$lib/components/NewDialog.svelte';
 
     export let people: Person[] = [];
-	export let currentPersonId: number;
+	export let currentPersonId: string;
 
     const getCurrentPerson = (): string => {
 		if (currentPersonId === undefined) {
 			return 'Unknown';
 		}
 		return people.find((person) => person.id === currentPersonId)?.name ?? 'Unknown';
+		// return people.find((person) => person.id.toString() === currentPersonId)?.name ?? 'Unknown';
 	};
 </script>
 

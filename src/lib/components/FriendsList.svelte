@@ -3,16 +3,16 @@
     import type { Person } from '../types/types';
 
     // Destructure props once
-    const { 
+    const {
+        removeChannel,
         currentPersonId, 
         onPersonSelect, 
-        scrollChatBottom, 
-        people = [] 
+        people = []
     }: { 
-        currentPersonId: number, 
-        onPersonSelect: (personId: number) => void, 
-        scrollChatBottom: (behavior?: 'auto' | 'instant' | 'smooth') => void, 
-        people?: Person[] 
+        removeChannel: (channel: string) => void,
+        currentPersonId: string, 
+        onPersonSelect: (personId: string) => void, 
+        people?: string[] 
     } = $props();
 
     // Reactive state for search
@@ -21,16 +21,17 @@
     // Derived filtered list
     const filteredPeople = $derived(() =>
         people.filter((person) =>
-            person.name.toLowerCase().includes(searchQuery.toLowerCase())
+            person.toLowerCase().includes(searchQuery?.toLowerCase())
         )
     );
 
     // Safe switch function → do not assign currentPersonId (prop!)
-    const switchToChat = (personId: number) => {
+    const switchToChat = (personId: string) => {
         console.log("switchToChat", personId);
         onPersonSelect(personId);
         searchQuery = '';
     };
+    
 </script>
 
 
@@ -45,6 +46,10 @@
     />
     </header>
 
+    <!-- remove all contacts -->
+    <button class="button button-danger w-full mb-2" onclick={() => {people.forEach(removeChannel); searchQuery = '';}}>
+        Purge all contacts
+    </button>
 
     <small class="opacity-50">Contacts</small>
 
@@ -52,14 +57,14 @@
         {#each filteredPeople() as person}
             <button
                 type="button"
-                class="card flex w-full items-center space-x-4 p-2 {person.id === currentPersonId
+                class="card flex w-full items-center space-x-4 p-2 {person.toString() === currentPersonId
                     ? 'preset-filled-primary-500'
                     : 'bg-surface-hover-token'}"
-                onclick={() => switchToChat(person.id)}
+                onclick={() => switchToChat(person)}
             >
-                <AvatarImage name={person.name} small={false} />
+                <AvatarImage name={person} small={false} />
                 <span class="flex-1 text-start">
-                    {person.name}
+                    {person}
                 </span>
             </button>
         {/each}

@@ -22,7 +22,7 @@
 <dialog
 	bind:this={elemModal}
 	data-dialog
-	class="rounded-container bg-surface-100-900 backdrop:bg-surface-50/75 dark:backdrop:bg-surface-950/75 top-1/2 left-1/2 z-10 max-w-[640px] -translate-1/2 space-y-4 p-4 text-inherit select-none"
+	class="rounded-container bg-surface-100-900 backdrop:bg-surface-50/75 dark:backdrop:bg-surface-950/75 top-1/2 left-1/2 z-10 max-w-[640px] -translate-1/2 space-y-4 p-4 text-inherit"
 	onclick={() => elemModal?.close()}
 >
 	<div
