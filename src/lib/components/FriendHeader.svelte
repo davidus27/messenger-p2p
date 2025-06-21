@@ -1,5 +1,4 @@
 <script lang="ts">
-
     export let people: string[] = [];
 	export let currentPersonId: string;
 
@@ -7,7 +6,7 @@
 		if (currentPersonId === undefined) {
 			return 'Unknown';
 		}
-		return people.find((person) => person === currentPersonId) ?? 'Unknown';
+		return people.find((person) => person === currentPersonId) ?? 'Noone';
 	};
 </script>
 
