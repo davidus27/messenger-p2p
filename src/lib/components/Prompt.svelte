@@ -4,6 +4,7 @@
 	export let textareaElement: HTMLTextAreaElement;
 	export let currentMessage: string;
 	export let sendNewMessage: () => void;
+	export let disabled: boolean = false;
 
 	const autoResizeTextarea = () => {
 		if (textareaElement) {
@@ -36,23 +37,28 @@
 	<div
 		class="input-group divide-surface-200-800 rounded-container-token grid-cols-[auto_1fr_auto] divide-x shadow-sm"
 	>
-		<button class="input-group-cell preset-tonal p-3 hover:bg-surface-200-800 transition-colors">+</button>
+		<button 
+			class="input-group-cell preset-tonal p-3 hover:bg-surface-200-800 transition-colors {disabled ? 'opacity-50 cursor-not-allowed' : ''}"
+			disabled={disabled}
+		>+</button>
 
 		<textarea
 			bind:this={textareaElement}
 			bind:value={currentMessage}
-			class="max-h-[12rem] resize-none overflow-y-auto border-0 bg-transparent p-3 ring-0 focus:outline-none"
+			class="max-h-[12rem] resize-none overflow-y-auto border-0 bg-transparent p-3 ring-0 focus:outline-none {disabled ? 'opacity-50 cursor-not-allowed' : ''}"
 			name="prompt"
 			id="prompt"
 			placeholder="Write a message..."
 			rows="1"
 			on:keydown={onPromptKeydown}
 			on:input={autoResizeTextarea}
+			disabled={disabled}
 		></textarea>
 
 		<button
-			class="input-group-cell {currentMessage ? 'preset-filled-primary-500' : 'preset-tonal'} p-3 hover:bg-surface-200-800 transition-colors"
+			class="input-group-cell {currentMessage ? 'preset-filled-primary-500' : 'preset-tonal'} p-3 hover:bg-surface-200-800 transition-colors {disabled ? 'opacity-50 cursor-not-allowed' : ''}"
 			on:click={sendNewMessage}
+			disabled={disabled}
 		>
 			<IconSend />
 		</button>

@@ -96,8 +96,22 @@
 
 			<!-- remove all contacts -->
 			<nav class="btn-group preset-outlined-surface-200-800 flex-col p-2 md:flex-row">
-				<button type="button" class="btn preset-filled" onclick={() => chat.channels.forEach(removeChannel)}>Purge contacts</button>
-				<button type="button" class="btn hover:preset-tonal" onclick={() => regenerateId()}>Generate new PeerID</button>
+				<button
+					type="button"
+					class="btn preset-filled"
+					onclick={() => chat.channels.forEach(removeChannel)}>Purge contacts</button
+				>
+				<button type="button" class="btn hover:preset-tonal" onclick={() => regenerateId()}
+					>Generate new PeerID</button
+				>
+				<button
+					type="button"
+					class="btn hover:preset-tonal"
+					onclick={() => {
+						localStorage.clear();
+						location.reload();
+					}}>Purge everything</button
+				>
 			</nav>
 		</div>
 		<!-- Chat -->
@@ -105,14 +119,24 @@
 			<!-- Name of the person -->
 			<FriendHeader people={chat.channels} {currentPersonId} />
 			<!-- Messages area takes up remaining space and is scrollable -->
-			<MessageFeed
-				peerId={currentPersonId}
-				myId={chat.myId}
-				messages={chat.messages[chat.currentChannel]}
-				bind:elemChat
-			/>
-			<!-- Prompt -->
-			<Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
+			{#if chat.currentChannel}
+				<MessageFeed
+					peerId={currentPersonId}
+					myId={chat.myId}
+					messages={chat.messages[chat.currentChannel]}
+					bind:elemChat
+				/>
+
+				<!-- Prompt -->
+				<Prompt bind:textareaElement bind:currentMessage {sendNewMessage} />
+			{:else}
+				<div class="flex h-full items-center justify-center">
+					<p class="text-surface-600-300">Select a friend to start chatting</p>
+				</div>
+
+				<!-- Prompt -->
+				<Prompt bind:textareaElement bind:currentMessage {sendNewMessage} disabled />
+			{/if}
 		</div>
 	</div>
 </section>
