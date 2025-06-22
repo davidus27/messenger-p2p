@@ -108,7 +108,7 @@
 							id="name"
 							type="text"
 							placeholder="Enter your name"
-							class="input {showError ? 'input-error animate-shake' : ''}"
+							class="input text-center {showError ? 'input-error animate-shake' : ''}"
 							bind:value={name}
 							on:keydown={handleKeydown}
 							on:input={handleInput}
