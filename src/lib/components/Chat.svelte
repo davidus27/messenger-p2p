@@ -77,7 +77,9 @@
 
 	// When DOM is mounted, scroll to bottom
 	onMount(() => {
-		scrollChatBottom('instant');
+		if (elemChat) {
+			elemChat.scrollTo({ top: elemChat.scrollHeight, behavior: 'instant' });
+		}
 	});
 </script>
 
