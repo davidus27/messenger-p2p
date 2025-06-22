@@ -12,40 +12,43 @@ function createChatStore(): ChatStoreType {
   });
 
   let peer = new PeerService(localStorage.getItem('peer-id') || null);
+  initializeEvents();
 
-  peer.addEventListener('open', (e) => {
-    const id = (e as CustomEvent).detail;
-    localStorage.setItem('peer-id', id);
-    update(state => ({ ...state, myId: id }));
-    loadChannels();
-  });
+  function initializeEvents() {
+    peer.addEventListener('open', (e) => {
+      const id = (e as CustomEvent).detail;
+      localStorage.setItem('peer-id', id);
+      update(state => ({ ...state, myId: id }));
+      loadChannels();
+    });
 
-  peer.addEventListener('connection', (e) => {
-    console.log('connection', e);
-    const conn = (e as CustomEvent).detail;
-    addChannel(conn.peer, false);
-  });
-
-  peer.addEventListener('data', (e) => {
-    console.log('data', e);
-    const { conn, data } = (e as CustomEvent).detail;
-    if (data.type === 'ack') {
+    peer.addEventListener('connection', (e) => {
+      console.log('connection', e);
+      const conn = (e as CustomEvent).detail;
       addChannel(conn.peer, false);
-    }
-    else if (data.type === 'msg') {
-      update(state => {
-        const existing = state.messages[conn.peer] || [];
-        const next = [...existing, {
-          text: data.message, fromMe: false,
-          messageId: generateId(), peerId: conn.peer
-        }];
-        return {
-          ...state,
-          messages: { ...state.messages, [conn.peer]: next }
-        };
-      });
-    }
-  });
+    });
+
+    peer.addEventListener('data', (e) => {
+      console.log('data', e);
+      const { conn, data } = (e as CustomEvent).detail;
+      if (data.type === 'ack') {
+        addChannel(conn.peer, false);
+      }
+      else if (data.type === 'msg') {
+        update(state => {
+          const existing = state.messages[conn.peer] || [];
+          const next = [...existing, {
+            text: data.message, fromMe: false,
+            messageId: generateId(), peerId: conn.peer
+          }];
+          return {
+            ...state,
+            messages: { ...state.messages, [conn.peer]: next }
+          };
+        });
+      }
+    });
+  }
 
   function loadChannels() {
     console.log('loadChannels');
@@ -108,6 +111,10 @@ function createChatStore(): ChatStoreType {
     localStorage.setItem('channels', '[]');
     // Create new peer service with null ID to generate a fresh ID
     peer = new PeerService(null);
+
+    // re-initialize all events
+    initializeEvents();
+
     // Reset the store state
     update(state => ({
       ...state,
