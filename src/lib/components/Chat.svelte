@@ -91,6 +91,7 @@
 			<FriendsList
 				{removeChannel}
 				people={chat.channels}
+				peerNames={chat.peerNames}
 				{currentPersonId}
 				onPersonSelect={handlePersonSelect}
 			/>
@@ -119,12 +120,15 @@
 		<!-- Chat -->
 		<div class="flex h-full flex-col">
 			<!-- Name of the person -->
-			<FriendHeader people={chat.channels} {currentPersonId} />
+			<FriendHeader 
+				people={chat.channels} 
+				currentPersonId={currentPersonId}
+				peerNames={chat.peerNames} 
+			/>
 			<!-- Messages area takes up remaining space and is scrollable -->
 			{#if chat.currentChannel}
 				<MessageFeed
-					peerId={currentPersonId}
-					myId={chat.myId}
+					peerName={chat.peerNames[chat.currentChannel] || chat.currentChannel}
 					messages={chat.messages[chat.currentChannel]}
 					bind:elemChat
 				/>

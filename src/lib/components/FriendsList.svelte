@@ -6,12 +6,14 @@
         removeChannel,
         currentPersonId, 
         onPersonSelect, 
-        people = []
+        people = [],
+        peerNames = {}
     }: { 
         removeChannel: (channel: string) => void,
         currentPersonId: string, 
         onPersonSelect: (personId: string) => void, 
-        people?: string[] 
+        people?: string[],
+        peerNames?: Record<string, string>
     } = $props();
 
     // Reactive state for search
@@ -19,9 +21,10 @@
 
     // Derived filtered list
     const filteredPeople = $derived(() =>
-        people.filter((person) =>
-            person.toLowerCase().includes(searchQuery?.toLowerCase())
-        )
+        people.filter((person) => {
+            const displayName = peerNames[person] || person;
+            return displayName.toLowerCase().includes(searchQuery?.toLowerCase());
+        })
     );
 
     // Safe switch function → do not assign currentPersonId (prop!)
@@ -31,6 +34,10 @@
         searchQuery = '';
     };
     
+    // Get display name for a peer
+    const getDisplayName = (peerId: string) => {
+        return peerNames[peerId] || peerId;
+    };
 </script>
 
 
@@ -58,7 +65,7 @@
             >
                 <AvatarImage name={person} small={false} />
                 <span class="flex-1 text-start">
-                    {person}
+                    {getDisplayName(person)}
                 </span>
             </button>
         {/each}

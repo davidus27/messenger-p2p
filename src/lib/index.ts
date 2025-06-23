@@ -6,18 +6,20 @@ class PeerService extends EventTarget {
     private peer: Peer;
     private acked = new Set<string>();
     private connections: Record<string, any> = {};
+    private userName: string;
   
-    constructor(peerId: string | null) {
+    constructor(peerId: string | null, userName: string | null) {
       super();
       this.peer = new Peer(peerId || undefined);
-      this.peer.on('open', id => this.dispatchEvent(new CustomEvent('open', { detail: id })));
+      this.userName = userName || '';
+      this.peer.on('open', id => this.dispatchEvent(new CustomEvent('open', { detail: id})));
       this.peer.on('connection', conn => this.handleConnection(conn));
     }
   
     send(channel: string, message: string) {
       const conn = this.ensureConnection(channel);
       if (conn) {
-        conn.send(JSON.stringify({ type: 'msg', from: this.peer.id, message }));
+        conn.send(JSON.stringify({ type: 'msg', from: this.peer.id, name: this.userName, message }));
       }
     }
   
@@ -39,7 +41,7 @@ class PeerService extends EventTarget {
   
       conn.on('open', () => {
         if (!this.acked.has(conn.peer)) {
-          conn.send(JSON.stringify({ type: 'ack', from: this.peer.id }));
+          conn.send(JSON.stringify({ type: 'ack', from: this.peer.id, name: this.userName }));
           this.acked.add(conn.peer);
         }
       });
@@ -52,6 +54,10 @@ class PeerService extends EventTarget {
       this.connections[id] = conn;
       this.handleConnection(conn);
       return conn;
+    }
+
+    public getUserName() {
+      return this.userName;
     }
 }
   

@@ -42,7 +42,7 @@
 				
 				// Generate a new peer ID
 				chatStore.regenerateId();
-				
+			
 				// Store the name in localStorage
 				if (browser) {
 					localStorage.setItem('user-name', name.trim());
